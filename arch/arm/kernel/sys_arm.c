@@ -34,7 +34,7 @@ extern unsigned long do_mremap(unsigned long addr, unsigned long old_len,
 			       unsigned long new_addr);
 
 /* common code for old and new mmaps */
-inline long do_mmap2(
+long do_mmap2(
 	unsigned long addr, unsigned long len,
 	unsigned long prot, unsigned long flags,
 	unsigned long fd, unsigned long pgoff)
