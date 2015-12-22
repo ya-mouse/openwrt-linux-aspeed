@@ -312,7 +312,7 @@ extern void tty_set_operations(struct tty_driver *driver,
 extern struct tty_driver *tty_find_polling_driver(char *name, int *line);
 
 extern void tty_driver_kref_put(struct tty_driver *driver);
-extern inline struct tty_driver *tty_driver_kref_get(struct tty_driver *d)
+inline struct tty_driver *tty_driver_kref_get(struct tty_driver *d)
 {
 	kref_get(&d->kref);
 	return d;
