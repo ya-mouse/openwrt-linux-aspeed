@@ -160,10 +160,7 @@ identify_ramdisk_image(int fd, int start_block, decompress_fn *decompressor)
 		printk(KERN_NOTICE
 		       "RAMDISK: squashfs filesystem found at block %d\n",
 		       start_block);
-		if (squashfsb->s_major < 3)
-			nblocks = (squashfsb->bytes_used_2+BLOCK_SIZE-1)>>BLOCK_SIZE_BITS;
-		else
-			nblocks = (squashfsb->bytes_used+BLOCK_SIZE-1)>>BLOCK_SIZE_BITS;
+		nblocks = (le64_to_cpu(squashfsb->bytes_used) + BLOCK_SIZE - 1) >> BLOCK_SIZE_BITS;
 		goto done;
 	}
 
