@@ -543,6 +543,7 @@ asmlinkage void __init start_kernel(void)
 {
 	char * command_line;
 	extern struct kernel_param __start___param[], __stop___param[];
+	unsigned int uart = IO_ADDRESS(0x1e784000);
 
 	smp_setup_processor_id();
 
@@ -622,7 +623,9 @@ asmlinkage void __init start_kernel(void)
 	 * we've done PCI setups etc, and console_init() must be aware of
 	 * this. But we do want output early, in case something goes wrong.
 	 */
+        (*(unsigned int *)uart) = 'I';
 	console_init();
+        (*(unsigned int *)uart) = '+';
 	if (panic_later)
 		panic(panic_later, panic_param);
 

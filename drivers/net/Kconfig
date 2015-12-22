@@ -1889,6 +1889,9 @@ menuconfig NETDEV_1000
 
 if NETDEV_1000
 
+config ASPEEDMAC
+        tristate "ASPEED MAC support"
+
 config ACENIC
 	tristate "Alteon AceNIC/3Com 3C985/NetGear GA620 Gigabit support"
 	depends on PCI

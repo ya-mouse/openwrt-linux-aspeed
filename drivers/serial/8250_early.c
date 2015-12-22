@@ -176,7 +176,7 @@ static int __init parse_options(struct early_serial8250_device *device,
 		length = min(strcspn(options, " "), sizeof(device->options));
 		strncpy(device->options, options, length);
 	} else {
-		device->baud = probe_baud(port);
+//		device->baud = probe_baud(port);
 		snprintf(device->options, sizeof(device->options), "%u",
 			device->baud);
 	}
@@ -208,7 +208,7 @@ static int __init early_serial8250_setup(char *options)
 	if (err < 0)
 		return err;
 
-	init_port(device);
+//	init_port(device);
 	return 0;
 }
 
@@ -241,19 +241,25 @@ int serial8250_find_port_for_earlycon(void)
 	int line;
 	int ret;
 
+	printk("EARLY\n");
+//	device->port.membase = AST_UART1_BASE;
 	if (!device->port.membase && !device->port.iobase)
 		return -ENODEV;
 
+	printk("EARLY: %x\n", device->port.membase);
 	line = serial8250_find_port(port);
+	printk("EARLY: %d\n", line);
 	if (line < 0)
 		return -ENODEV;
 
 	ret = update_console_cmdline("uart", 8250,
 			     "ttyS", line, device->options);
+	printk("EARLY UP: %d\n", ret);
 	if (ret < 0)
 		ret = update_console_cmdline("uart", 0,
 				     "ttyS", line, device->options);
 
+	printk("EARLY UP2: %d\n", ret);
 	return ret;
 }
 
