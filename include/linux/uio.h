@@ -1,6 +1,7 @@
 #ifndef __LINUX_UIO_H
 #define __LINUX_UIO_H
 
+#ifdef __KERNEL__
 #include <linux/compiler.h>
 #include <linux/types.h>
 
@@ -53,5 +54,7 @@ static inline size_t iov_length(const struct iovec *iov, unsigned long nr_segs)
 }
 
 unsigned long iov_shorten(struct iovec *iov, unsigned long nr_segs, size_t to);
+
+#endif
 
 #endif

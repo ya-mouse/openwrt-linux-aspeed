@@ -11,6 +11,11 @@
 #include <linux/posix_types.h>
 #include <asm/types.h>
 
+#ifndef __KERNEL__
+#include <sys/types.h>
+typedef __u32 __kernel_dev_t;
+#else
+
 #ifndef __KERNEL_STRICT_NAMES
 
 typedef __u32 __kernel_dev_t;
@@ -160,6 +165,8 @@ typedef unsigned long blkcnt_t;
 #endif
 
 #endif /* __KERNEL_STRICT_NAMES */
+
+#endif
 
 /*
  * Below are truly Linux-specific types that should never collide with

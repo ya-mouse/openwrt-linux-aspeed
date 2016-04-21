@@ -16,8 +16,6 @@ struct __kernel_sockaddr_storage {
 				/* _SS_MAXSIZE value minus size of ss_family */
 } __attribute__ ((aligned(_K_SS_ALIGNSIZE)));	/* force desired alignment */
 
-#if defined(__KERNEL__) || !defined(__GLIBC__) || (__GLIBC__ < 2)
-
 #include <asm/socket.h>			/* arch-dependent defines	*/
 #include <linux/sockios.h>		/* the SIOCxxx I/O controls	*/
 #include <linux/uio.h>			/* iovec support		*/
@@ -30,6 +28,8 @@ extern void socket_seq_show(struct seq_file *seq);
 #endif
 
 typedef unsigned short	sa_family_t;
+
+#if defined(__KERNEL__)
 
 /*
  *	1003.1g requires sa_family_t and that sa_data is char.
