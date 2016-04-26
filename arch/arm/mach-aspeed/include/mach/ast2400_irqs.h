@@ -51,8 +51,8 @@
 #define IRQ_XDMA						6
 #define IRQ_VIDEO						7
 #define IRQ_LPC							8
-#define IRQ_UART1						9			/* UART 1 interrupt */
-#define IRQ_UART0						10			/* UART 5 interrupt */
+#define IRQ_UART0						9			/* UART 1 interrupt */
+#define IRQ_UART1						10			/* UART 5 interrupt */
 //11 Reserved
 #define IRQ_I2C							12
 #define IRQ_UDC11					13

@@ -55,8 +55,8 @@
 #define AST_GPIO_BASE                      0x1E780000	/* GPIO */
 #define AST_RTC_BASE                       0x1E781000	/* RTC */
 #define AST_TIMER_BASE                     0x1E782000	/* TIMER #0~7*/
-#define AST_UART1_BASE                     0x1E783000	/* UART1 */
-#define AST_UART0_BASE                     0x1E784000	/* UART5 */
+#define AST_UART0_BASE                     0x1E783000	/* UART1 */
+#define AST_UART1_BASE                     0x1E784000	/* UART5 */
 #define AST_WDT_BASE                       0x1E785000	/* WDT */
 #define AST_PWM_BASE                       0x1E786000	/* PWM */
 #define AST_VUART0_BASE                    0x1E787000	/* VUART1 */
