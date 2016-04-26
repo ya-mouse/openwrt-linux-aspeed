@@ -48,7 +48,7 @@ static struct plat_serial8250_port ast_uart_data[] = {
 	{
 		.mapbase	= AST_UART0_BASE,
 		.irq		= IRQ_UART0,
-		.uartclk	= 1843200, // (24*1000000L),
+		.uartclk	= (24*1000000L/13),
 		.regshift	= 2,
 #if defined(CONFIG_COLDFIRE)		
 		.iotype		= UPIO_MEM32,
@@ -103,10 +103,10 @@ static struct plat_serial8250_port ast_uart_data[] = {
 		.mapbase	= AST_UART1_BASE,
 		.membase	= (char*)(IO_ADDRESS(AST_UART1_BASE)),
 		.irq		= IRQ_UART1,
-		.uartclk	= 1843200, // (24*1000000L),
+		.uartclk	= (24*1000000L/13),
 		.regshift	= 2,
 		.iotype		= UPIO_MEM,
-		.flags		= UPF_BOOT_AUTOCONF | UPF_SKIP_TEST,
+		.flags		= UPF_IOREMAP | UPF_SKIP_TEST,
 	},
 #endif
 #ifdef AST_UART3_BASE
@@ -147,7 +147,7 @@ static struct uart_port u8250_early_uart = {
 	.iotype = UPIO_MEM,
 	.mapbase = AST_UART1_BASE,
 	.membase = (char*)(IO_ADDRESS(AST_UART1_BASE)),
-	.uartclk	= 1843200, // (24*1000000L),
+	.uartclk	= (24*1000000L/13),
 	.regshift = 2
 };
 
