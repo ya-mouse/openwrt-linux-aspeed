@@ -22,6 +22,8 @@
 #include <linux/slab.h>
 #include <linux/string.h>
 #include <linux/sysdev.h>
+#include <linux/platform_device.h>
+#include <linux/mtd/physmap.h>
 #include <asm/mach-types.h>
 #include <asm/mach/irq.h>
 #include <asm/mach/arch.h>
@@ -233,6 +235,55 @@ static struct map_desc ast_io_desc[] __initdata = {
 	},
 };
 
+/*
+ * 8M NOR flash Device bus boot chip select
+ */
+#define AST2400_SPI_BOOT_BASE	0x20000000
+#define AST2400_SPI_BOOT_SIZE	SZ_32M
+
+static struct mtd_partition ast2400_spi_flash_partitions[] = {
+	{
+		.name		= "uboot",
+		.offset		= 0x00000000,
+		.size		= 3*SZ_64K,
+		.mask_flags	= MTD_WRITEABLE,
+	}, {
+		.name		= "kernel",
+		.offset		= 0x00100000,
+		.size		= 0x00300000,
+	}, {
+		.name		= "rootfs",
+		.offset		= 0x00400000,
+		.size		= 0x01000000,
+	}, {
+		.name		= "data",
+		.offset		= 0x01400000,
+		.size		= 0x00c00000,
+	},
+};
+
+static struct physmap_flash_data ast2400_spi_flash_data = {
+	.width		= 2,
+	.parts		= ast2400_spi_flash_partitions,
+	.nr_parts	= ARRAY_SIZE(ast2400_spi_flash_partitions),
+};
+
+static struct resource ast2400_spi_flash_resource = {
+	.flags		= IORESOURCE_MEM,
+	.start		= AST2400_SPI_BOOT_BASE,
+	.end		= AST2400_SPI_BOOT_BASE + AST2400_SPI_BOOT_SIZE - 1,
+};
+
+static struct platform_device ast2400_spi_flash = {
+	.name			= "physmap-flash",
+	.id			= 0,
+	.dev		= {
+		.platform_data	= &ast2400_spi_flash_data,
+	},
+	.num_resources		= 1,
+	.resource		= &ast2400_spi_flash_resource,
+};
+
 void __init ast_map_io(void)
 {
 	iotable_init(ast_io_desc, ARRAY_SIZE(ast_io_desc));
@@ -241,6 +292,8 @@ void __init ast_map_io(void)
 static void __init ast_init(void)
 {
 	ast_add_all_devices();
+
+	platform_device_register(&ast2400_spi_flash);
 }
 
 MACHINE_START(ASPEED, "AST2400")
