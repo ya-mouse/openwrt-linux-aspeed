@@ -13,3 +13,5 @@ obj-$(CONFIG_MTD_SPI_NUMONYX) += numonyx.o
 
 # The default driver  should be the last in the list of suppported devices
 obj-$(CONFIG_MTD_SPI_DEFAULT)   += default.o
+
+obj-$(CONFIG_MTD_AST_SPI)   += astspi.o

@@ -459,7 +459,8 @@ static struct spi_board_info ast_spi1_devices[] = {
 };
 #endif
 
-#if defined(CONFIG_SPI_FMC) || defined(CONFIG_SPI_FMC_MODULE) || defined(CONFIG_SPI_AST) || defined(CONFIG_SPI_AST_MODULE)
+#if 0
+//defined(CONFIG_SPI_FMC) || defined(CONFIG_SPI_FMC_MODULE) || defined(CONFIG_SPI_AST) || defined(CONFIG_SPI_AST_MODULE)
 
 /*-------------------------------------*/
 void __init ast_add_device_spi(void)

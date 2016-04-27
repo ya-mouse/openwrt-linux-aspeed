@@ -168,7 +168,7 @@ int spi_generic_probe(int bank, struct spi_ctrl_driver *ctrl_drv, struct spi_fla
 #ifdef CONFIG_SPX_FEATURE_GLOBAL_BKUP_FLASH_BANKS
 #define MAX_SPI_BANKS	(CONFIG_SPX_FEATURE_GLOBAL_FLASH_BANKS + CONFIG_SPX_FEATURE_GLOBAL_BKUP_FLASH_BANKS)
 #else
-#define MAX_SPI_BANKS	CONFIG_SPX_FEATURE_GLOBAL_FLASH_BANKS
+#define MAX_SPI_BANKS	1
 #endif
 
 #endif

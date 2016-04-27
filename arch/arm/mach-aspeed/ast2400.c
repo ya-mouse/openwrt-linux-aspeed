@@ -46,6 +46,11 @@ static struct map_desc ast_io_desc[] __initdata = {
 		.length 		= SZ_4K,
 		.type			= MT_DEVICE,
 	}, {
+		.virtual		= IO_ADDRESS(AST_FMC_BASE), 
+		.pfn			= __phys_to_pfn(AST_FMC_BASE),
+		.length 		= SZ_4K,
+		.type			= MT_DEVICE,
+	}, {
 		.virtual		= IO_ADDRESS(AST_SDMC_BASE), 
 		.pfn			= __phys_to_pfn(AST_SDMC_BASE),
 		.length 		= SZ_4K,
@@ -232,13 +237,18 @@ static struct map_desc ast_io_desc[] __initdata = {
 		.pfn			= __phys_to_pfn(AST_UART3_BASE),
 		.length 		= SZ_4K,
 		.type			= MT_DEVICE,
+	}, { 
+		.virtual		= IO_ADDRESS(AST_CS0_DEF_BASE), 
+		.pfn			= __phys_to_pfn(AST_CS0_DEF_BASE),
+		.length 		= SZ_32M,
+		.type			= MT_DEVICE,
 	},
 };
 
 /*
  * 8M NOR flash Device bus boot chip select
  */
-#define AST2400_SPI_BOOT_BASE	0x20000000
+#define AST2400_SPI_BOOT_BASE	AST_CS0_DEF_BASE
 #define AST2400_SPI_BOOT_SIZE	SZ_32M
 
 static struct mtd_partition ast2400_spi_flash_partitions[] = {
