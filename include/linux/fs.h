@@ -1343,6 +1343,7 @@ struct inode_operations {
 			  loff_t len);
 	int (*fiemap)(struct inode *, struct fiemap_extent_info *, u64 start,
 		      u64 len);
+	struct file *(*open)(struct dentry *, int flags); //, const struct cred *);
 };
 
 struct seq_file;
@@ -1682,6 +1683,7 @@ extern int do_truncate(struct dentry *, loff_t start, unsigned int time_attrs,
 extern long do_sys_open(int dfd, const char __user *filename, int flags,
 			int mode);
 extern struct file *filp_open(const char *, int, int);
+extern struct file *vfs_open(struct path *, int flags);
 extern struct file * dentry_open(struct dentry *, struct vfsmount *, int);
 extern int filp_close(struct file *, fl_owner_t id);
 extern char * getname(const char __user *);
@@ -1827,6 +1829,8 @@ extern int __filemap_fdatawrite_range(struct address_space *mapping,
 extern int filemap_fdatawrite_range(struct address_space *mapping,
 				loff_t start, loff_t end);
 
+extern int vfs_fsync_range(struct file *file, loff_t start, loff_t end, int datasync);
+extern int vfs_fsync(struct file *file, int datasync);
 extern long do_fsync(struct file *file, int datasync);
 extern void sync_supers(void);
 extern void sync_filesystems(int wait);
@@ -2227,6 +2231,8 @@ int proc_nr_files(struct ctl_table *table, int write, struct file *filp,
 		  void __user *buffer, size_t *lenp, loff_t *ppos);
 
 int get_filesystem_list(char * buf);
+
+#define OPEN_FMODE(flag) ((__force fmode_t)(((flag + 1) & O_ACCMODE)))
 
 #endif /* __KERNEL__ */
 #endif /* _LINUX_FS_H */

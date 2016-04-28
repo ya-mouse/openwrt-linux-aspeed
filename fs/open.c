@@ -807,19 +807,20 @@ static inline int __get_file_write_access(struct inode *inode,
 	return error;
 }
 
-static struct file *__dentry_open(struct dentry *dentry, struct vfsmount *mnt,
+static struct file *__dentry_open(struct path *path,
 					int flags, struct file *f,
 					int (*open)(struct inode *, struct file *))
 {
 	struct inode *inode;
 	int error;
 
+	path_get(path);
 	f->f_flags = flags;
 	f->f_mode = (__force fmode_t)((flags+1) & O_ACCMODE) | FMODE_LSEEK |
 				FMODE_PREAD | FMODE_PWRITE;
-	inode = dentry->d_inode;
+	inode = path->dentry->d_inode;
 	if (f->f_mode & FMODE_WRITE) {
-		error = __get_file_write_access(inode, mnt);
+		error = __get_file_write_access(inode, path->mnt);
 		if (error)
 			goto cleanup_file;
 		if (!special_file(inode->i_mode))
@@ -827,8 +828,7 @@ static struct file *__dentry_open(struct dentry *dentry, struct vfsmount *mnt,
 	}
 
 	f->f_mapping = inode->i_mapping;
-	f->f_path.dentry = dentry;
-	f->f_path.mnt = mnt;
+	f->f_path = *path;
 	f->f_pos = 0;
 	f->f_op = fops_get(inode->i_fop);
 	file_move(f, &inode->i_sb->s_files);
@@ -873,7 +873,7 @@ cleanup_all:
 			 * here, so just reset the state.
 			 */
 			file_reset_write(f);
-			mnt_drop_write(mnt);
+			mnt_drop_write(path->mnt);
 		}
 	}
 	file_kill(f);
@@ -881,8 +881,7 @@ cleanup_all:
 	f->f_path.mnt = NULL;
 cleanup_file:
 	put_filp(f);
-	dput(dentry);
-	mntput(mnt);
+	path_put(path);
 	return ERR_PTR(error);
 }
 
@@ -908,12 +907,12 @@ cleanup_file:
 struct file *lookup_instantiate_filp(struct nameidata *nd, struct dentry *dentry,
 		int (*open)(struct inode *, struct file *))
 {
+	struct path path = { .dentry = dentry, .mnt = nd->path.mnt };
 	if (IS_ERR(nd->intent.open.file))
 		goto out;
 	if (IS_ERR(dentry))
 		goto out_err;
-	nd->intent.open.file = __dentry_open(dget(dentry), mntget(nd->path.mnt),
-					     nd->intent.open.flags - 1,
+	nd->intent.open.file = __dentry_open(&path, nd->intent.open.flags - 1,
 					     nd->intent.open.file,
 					     open);
 out:
@@ -939,10 +938,17 @@ struct file *nameidata_to_filp(struct nameidata *nd, int flags)
 	/* Pick up the filp from the open intent */
 	filp = nd->intent.open.file;
 	/* Has the filesystem initialised the file for us? */
-	if (filp->f_path.dentry == NULL)
-		filp = __dentry_open(nd->path.dentry, nd->path.mnt, flags, filp,
+	if (filp->f_path.dentry == NULL) {
+		struct inode *inode = nd->path.dentry->d_inode;
+		if (inode->i_op->open) {
+			int flags = filp->f_flags;
+			put_filp(filp);
+			filp = inode->i_op->open(nd->path.dentry, flags);
+		} else {
+			filp = __dentry_open(&nd->path, flags, filp,
 				     NULL);
-	else
+		}
+	} else
 		path_put(&nd->path);
 	return filp;
 }
@@ -953,32 +959,41 @@ struct file *nameidata_to_filp(struct nameidata *nd, int flags)
  */
 struct file *dentry_open(struct dentry *dentry, struct vfsmount *mnt, int flags)
 {
-	int error;
-	struct file *f;
+	struct path path = { .dentry = dentry, .mnt = mnt };
+	struct file *ret;
 
-	/*
-	 * We must always pass in a valid mount pointer.   Historically
-	 * callers got away with not passing it, but we must enforce this at
-	 * the earliest possible point now to avoid strange problems deep in the
-	 * filesystem stack.
-	 */
-	if (!mnt) {
-		printk(KERN_WARNING "%s called with NULL vfsmount\n", __func__);
-		dump_stack();
-		return ERR_PTR(-EINVAL);
-	}
+	BUG_ON(!mnt);
 
-	error = -ENFILE;
-	f = get_empty_filp();
-	if (f == NULL) {
-		dput(dentry);
-		mntput(mnt);
-		return ERR_PTR(error);
-	}
+	ret = vfs_open(&path, flags);
+	path_put(&path);
 
-	return __dentry_open(dentry, mnt, flags, f, NULL);
+	return ret;
 }
 EXPORT_SYMBOL(dentry_open);
+
+/**
+ * vfs_open - open the file at the given path
+ * @path: path to open
+ * @flags: open flags
+ * @cred: credentials to use
+ *
+ * Open the file.  If successful, the returned file will have acquired
+ * an additional reference for path.
+ */
+struct file *vfs_open(struct path *path, int flags)
+{
+	struct file *f;
+	struct inode *inode = path->dentry->d_inode;
+
+	f = get_empty_filp();
+	if (f == NULL) {
+		return ERR_PTR(-ENFILE);
+	}
+
+	f->f_flags = flags;
+	return __dentry_open(path, flags, f, NULL);
+}
+EXPORT_SYMBOL(vfs_open);
 
 static void __put_unused_fd(struct files_struct *files, unsigned int fd)
 {

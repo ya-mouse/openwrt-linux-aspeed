@@ -93,6 +93,9 @@ static inline void mntput(struct vfsmount *mnt)
 	}
 }
 
+struct path;
+extern struct vfsmount *clone_private_mount(struct path *path);
+
 extern struct vfsmount *do_kern_mount(const char *fstype, int flags,
 				      const char *name, void *data);
 

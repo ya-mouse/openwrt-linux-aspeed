@@ -19,6 +19,8 @@ config FS_XIP
 source "fs/jbd/Kconfig"
 source "fs/jbd2/Kconfig"
 
+source "fs/overlayfs/Kconfig"
+
 config FS_MBCACHE
 # Meta block cache for Extended Attributes (ext2/ext3/ext4)
 	tristate

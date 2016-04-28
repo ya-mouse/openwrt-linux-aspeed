@@ -1304,6 +1304,7 @@ out:
 		sd->u.userptr += ret;
 	return ret;
 }
+EXPORT_SYMBOL(do_splice_direct);
 
 /*
  * For lack of a better implementation, implement vmsplice() to userspace
