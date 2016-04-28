@@ -2216,12 +2216,14 @@ struct ovl_config {
 enum {
 	Opt_lowerdir,
 	Opt_upperdir,
+	Opt_workdir,
 	Opt_err,
 };
 
 static const match_table_t ovl_tokens = {
 	{Opt_lowerdir,			"lowerdir=%s"},
 	{Opt_upperdir,			"upperdir=%s"},
+	{Opt_workdir,			"workdir=%s"},
 	{Opt_err,			NULL}
 };
 
@@ -2253,6 +2255,9 @@ static int ovl_parse_opt(char *opt, struct ovl_config *config)
 			config->lowerdir = match_strdup(&args[0]);
 			if (!config->lowerdir)
 				return -ENOMEM;
+			break;
+
+		case Opt_workdir:
 			break;
 
 		default:
