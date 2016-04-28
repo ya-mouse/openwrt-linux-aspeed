@@ -28,6 +28,7 @@
 #include <linux/ethtool.h>
 #include <linux/mii.h>
 #include <linux/rtnetlink.h>
+#include <plat/regs-scu.h>
 
 #include "ast_ether.h"
 
@@ -231,7 +232,7 @@ static void ast_ether_set_link_status(struct net_device* dev)
             {
 				if(priv->link_state != 1)
 				{
-					netdev_link_up(dev);
+					//netdev_link_up(dev);
 					priv->link_state = 1;
 				}
                 rtnl_unlock();
@@ -240,7 +241,7 @@ static void ast_ether_set_link_status(struct net_device* dev)
             {
 				if(priv->link_state != 1)
 				{
-					netdev_link_up(dev);
+					//netdev_link_up(dev);
 					priv->link_state = 1;
 				}
             }
@@ -322,7 +323,7 @@ static void ast_ether_set_link_status(struct net_device* dev)
             {
 				if(priv->link_state != 0)
 				{
-					netdev_link_down(dev);
+					//netdev_link_down(dev);
 					priv->link_state = 0;
 				}
                 rtnl_unlock();
@@ -331,7 +332,7 @@ static void ast_ether_set_link_status(struct net_device* dev)
             {
 				if(priv->link_state != 0)
 				{
-					netdev_link_down(dev);
+					//netdev_link_down(dev);
 					priv->link_state = 0;
 				}
             }
@@ -1251,8 +1252,8 @@ static int ast_ether_init_one(int id)
 	}
 
 	dev->irq = ast_ether_irq[id];
-	IRQ_SET_HIGH_LEVEL(dev->irq);
-	IRQ_SET_LEVEL_TRIGGER(dev->irq);
+	//IRQ_SET_HIGH_LEVEL(dev->irq);
+	//IRQ_SET_LEVEL_TRIGGER(dev->irq);
 	dev->init = ast_ether_setup;
 	dev->dev_id = id;
 	ast_ether_get_hardware_addr(dev);
@@ -1283,6 +1284,10 @@ out_alloc_etherdev:
 #define AST_SCU_RESET_MAC1               0x00000800 /* bit 11 */
 
 #define AST_SCU_UNLOCK_MAGIC             0x1688A8A8
+
+#define SCU_KEY_CONTROL_REG              (IO_ADDRESS(AST_SCU_BASE)+AST_SCU_PROTECT)
+#define SCU_SYS_RESET_REG                (IO_ADDRESS(AST_SCU_BASE)+AST_SCU_RESET)
+#define SCU_CLK_STOP_REG                 (IO_ADDRESS(AST_SCU_BASE)+AST_SCU_CLK_STOP)
 
 void __init ast_ether_scu_init(void)
 {
