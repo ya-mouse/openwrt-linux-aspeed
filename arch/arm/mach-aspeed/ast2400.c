@@ -266,7 +266,7 @@ static struct mtd_partition ast2400_spi_flash_partitions[] = {
 		.offset		= 0x00400000,
 		.size		= 0x01000000,
 	}, {
-		.name		= "data",
+		.name		= "rootfs_data",
 		.offset		= 0x01400000,
 		.size		= 0x00c00000,
 	},
