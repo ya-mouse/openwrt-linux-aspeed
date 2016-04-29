@@ -941,7 +941,7 @@ struct file *nameidata_to_filp(struct nameidata *nd, int flags)
 	if (filp->f_path.dentry == NULL) {
 		struct inode *inode = nd->path.dentry->d_inode;
 		if (inode->i_op->open) {
-			int flags = filp->f_flags;
+			filp->f_flags = flags;
 			put_filp(filp);
 			filp = inode->i_op->open(nd->path.dentry, flags);
 		} else {
